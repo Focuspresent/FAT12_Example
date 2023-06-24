@@ -63,7 +63,6 @@ void fo_edit_fat(u16 target_order,u16 next_order){
     u16 fat,save;
     //读出
     disk_read(&fat,start+offset,sizeof(u16));
-    //printf("%04x\n",fat);
     if(target_order%2){
         //奇数,需要保留低4位,修改高12位
         save=fat&0x000f;
@@ -75,7 +74,6 @@ void fo_edit_fat(u16 target_order,u16 next_order){
         fat=next_order;
         fat=fat|save;
     }
-    //printf("%04x\n",fat);
     //写回,修改
     disk_write(&fat,start+offset,sizeof(u16));
     //如果新分配簇,清空旧簇的数据
@@ -170,14 +168,12 @@ u32 fo_remove_short_dir(u32 start,char* dirname){
     }
     
     if(dirname!=NULL){
-        //puts("个别");
         //寻找目录
         for(int i=0;i<bpb.clus_size/FILE_SIZE;i++){
             struct file_entry temp;
             disk_read(&temp,start+i*FILE_SIZE,FILE_SIZE);
             if(strlen(temp.Dir_Name)==0) return 0;
             if(temp.Dir_Name[0]!=0xe5&&temp.Dir_Attr==0x10&&fo_stricmp(dirname,temp.Dir_Name,8)){
-                //printf("应该删除%s\n",temp.Dir_Name);
                 temp.Dir_Name[0]=0xe5;
                 disk_write(&temp,start+i*FILE_SIZE,FILE_SIZE);
                 //清空子目录
@@ -200,10 +196,8 @@ u32 fo_remove_short_dir(u32 start,char* dirname){
             struct file_entry temp;
             disk_read(&temp,start+i*FILE_SIZE,FILE_SIZE);
             if(temp.Dir_Name[0]==0) return 0;
-            //printf("%s\n",temp.Dir_Name);
             if(temp.Dir_Name[0]!=0xe5&&temp.Dir_Name[0]!=0x2e){
                 if(temp.Dir_Attr==0x10){
-                    //printf("应该删除%s\n",temp.Dir_Name);
                     temp.Dir_Name[0]=0xe5;
                     disk_write(&temp,start+i*FILE_SIZE,FILE_SIZE);
                     //多簇
@@ -217,7 +211,6 @@ u32 fo_remove_short_dir(u32 start,char* dirname){
                         cur_offset=fo_clus_to_offset(cur_order);
                     }
                 }else if(temp.Dir_Attr==0x20){
-                    //printf("应该删除%s\n",temp.Dir_Name);
                     temp.Dir_Name[0]=0xe5;
                     disk_write(&temp,start+i*FILE_SIZE,FILE_SIZE);
                     if(temp.Dir_First_Clus){
@@ -310,7 +303,6 @@ u32 fo_create_short_dir(u32 start,char* dirname){
     //填充父目录结构体
     //先得到簇号
     target.Dir_First_Clus=fo_get_next_free_fat();
-    //printf("%d\n",target.Dir_First_Clus);
     if(!target.Dir_First_Clus){
         puts("ERROR: None unused clus!");
         return 0;
@@ -390,10 +382,6 @@ u32 fo_create_short_file(u32 start,char* filename){
     for(int i=18,j=s_start;i<32&&j<strlen(filename);i+=2,j++){
         seg[i]=filename[j];
     }
-    /*for(int i=0;i<16;i++){
-        printf("%02hhx ",seg[i]);
-    }
-    printf("\n");*/
 
     //填充结构体
     struct file_entry target;
@@ -430,8 +418,6 @@ u32 fo_create_short_file(u32 start,char* filename){
     }
     //时间转化
     fo_datetime(&target.Dir_WrtDate,&target.Dir_WrtTime,1);
-    //printf("%d %d\n",target.Dir_WrtDate,target.Dir_WrtTime);
-    //fo_datetime(&target.Dir_WrtDate,&target.Dir_WrtTime,0);
     target.Dir_First_Clus=0;
     target.Dir_First_Clus=0;
 
@@ -476,7 +462,6 @@ u32 fo_is_short_file(char* filename,int* s_start,int* sum_pre){
     for(int i=*s_start;i<strlen(filename);i++){
         sum_suf+=isupper(filename[i]);
     }
-    //printf("%d %d\n",sum_pre,sum_suf);
     if(sum_suf||(*sum_pre&&(*sum_pre)<*s_start-1)) return 0;
     return 1;
 }
@@ -500,7 +485,6 @@ void fo_datetime(u16* date,u16* time,u32 flag){
     }else{
         SYSTEMTIME _time;
         GetLocalTime(&_time);
-        //printf("当前时间为：%2d:%2d:%2d %2d:%2d\n",_time.wYear,_time.wMonth,_time.wDay,_time.wHour,_time.wMinute);
         u16 year=(u16)(_time.wYear-1980);
         year=year<<9;
         *date=*date|year;
@@ -665,7 +649,6 @@ void fo_printf_entry_fat(u16 Firstorder){
         u16 next_order=fo_get_next_fat(cur_order);
         cur_order=next_order;
     }
-    //printf("\n");
 }
 
 /* 
