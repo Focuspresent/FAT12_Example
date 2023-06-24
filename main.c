@@ -10,14 +10,14 @@
 #define VOL_NAME 'h' /* 卷标，根据自己的分区进行调整 */
 
 struct bios_pram_block bpb; /* 定义全局BPB */
-u32 dir_offset[16];
-u32 cur_index=0;
-u32 dir_mul_offset[16];
+u32 dir_offset[16]; /* 当前目录的偏移量 */
+u32 cur_index=0;  /* 指示当前目录 */
+u32 dir_mul_offset[16]; /* 多簇偏移量数组 */
 u32 sum; /* 大于1的时候多簇 */
-u32 init_dir_mul_offset[16];
-u32 init_sum;
-char init_path[8]="PS N:\\>";
-char path[1000]="PS N:\\>";
+u32 init_dir_mul_offset[16]; /*用于初始化多簇偏移量数组 */
+u32 init_sum; /* 用于初始化多簇计数器 */
+char init_path[8]="PS N:\\>"; /* 路径 */
+char path[1000]="PS N:\\>"; /* 用于初始化路径 */
 
 void print_bpb(struct bios_pram_block *bpb);
 
