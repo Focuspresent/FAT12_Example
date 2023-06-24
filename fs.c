@@ -136,16 +136,12 @@ void hexdump(const char *dir){
     char* token;
     token=strtok((char*)dir,s);
     while(token!=NULL){
-        //printf("%s",token);
         if(strlen(token)==2&&token[0]=='C') flag++;
         if(atoi(token)) option=atoi(token);
         if(strlen(token)>2&&token[1]=='x') sscanf(token,"%x",&start);
-        //printf(" %d\n",flag);
         token=strtok(NULL,s);
     }
-    //printf("%d\n",flag);
     if(!flag){
-        //printf("应该调用\n");
         if(option){
             if(option%16==0) fo_printf_disk(DISK_CAPACITY,start,option);
             else puts("ERROR: -X need multiples of 16");
@@ -157,12 +153,6 @@ void hexdump(const char *dir){
 }
 
 void mkdir(const char *dir){
-    /*u8 temp[16];
-    memset(temp,0,16);
-    for(int i=0;i<96/16;i++){
-        disk_write(temp,0x4120+i*16,16);
-    }
-    fo_edit_fat(5,0);*/
     if(strlen(dir)==0){
         puts("ERROR: Parameter call error!");
         return ;
@@ -191,11 +181,6 @@ void mkdir(const char *dir){
 }
 
 void touch(const char *dir){
-    /*u8 temp[16];
-    memset(temp,0,16);
-    for(int i=0;i<96/16;i++){
-        disk_write(temp,0x4260+i*16,16);
-    }*/
     if(strlen(dir)==0){
         puts("ERROR: Parameter call error!");
         return ;
@@ -218,11 +203,9 @@ void touch(const char *dir){
     }
     ans=0;
     ans=fo_create_short_file(next_offset,(char*)dir);
-    //printf("0x%06x\n",next_offset);
     if(ans){
         puts("Create file success!");
     }
-    //printf("0x%06x\n",next_offset);
 }
 
 /*
@@ -239,7 +222,6 @@ void rm(const char *dir){
     memset(dirname,' ',8);
     token=strtok((char*)dir,s);
     while(token!=NULL){
-        //printf("%s\n",token);
         if(strlen(token)==1&&token[0]=='r') flag++;
         else{ 
             for(int i=0;i<strlen(token)-1;i++){
@@ -250,8 +232,6 @@ void rm(const char *dir){
         token=strtok(NULL,s);
     }
     if(flag>=0){
-        //puts("调用删除目录");
-        //printf("%06x",fo_get_next_dir(dir_offset[cur_index],dirname));
         u32 ans=0;
         if(sum>1){
             for(int i=0;i<sum;i++){
